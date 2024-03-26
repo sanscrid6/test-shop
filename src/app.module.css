@@ -1,0 +1,14 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    min-width: 100%;
+    min-height: 100%;
+    padding: 2rem;
+    row-gap: 13rem;
+    align-items: center;
+}
+
+.gridContainer {
+    display: flex;
+    column-gap: 3rem;
+}

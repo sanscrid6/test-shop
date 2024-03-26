@@ -1,0 +1,11 @@
+.container {
+    display: grid;
+    grid-template-columns: 5fr 5fr 5fr ;
+}
+
+.cell {
+    background-color: gray;
+    border: 1px solid black;
+    width: 5rem;
+    height: 5rem;
+}
