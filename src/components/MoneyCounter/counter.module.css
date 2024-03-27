@@ -1,8 +1,14 @@
-.container {
+.moneyContainer {
     display: flex;
     column-gap: 1rem;
     height: 2rem;
     align-items: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
 }
 
 .addButton {
@@ -19,4 +25,11 @@
     text-align: center;
     cursor: pointer;
     user-select: none;
+}
+
+.moneyInput {
+    border: none;
+    padding: 0;
+    width: fit-content;
+
 }
