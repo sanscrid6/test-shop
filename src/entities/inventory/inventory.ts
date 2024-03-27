@@ -1,31 +1,53 @@
+import {
+  StoreWritable,
+  createEvent,
+  createStore,
+  EventCallable,
+} from "effector";
 import { Item } from "../item";
 import { $money, decreaseMoney, increaseMoney } from "../money";
 
+type Grid = Array<Array<Item | null>>;
+
 export class Inventory {
+  public readonly $grid: StoreWritable<Grid>;
+
+  private readonly setGrid: EventCallable<Grid>;
+
   constructor(
     public readonly isVendor: boolean,
-    public grid: Array<Array<Item | null>>,
-  ) {}
-
-  //   public readonly grid: Array<Array<Item | null>> = [
-  //     [null, null, null],
-  //     [null, null, null],
-  //     [null, null, null],
-  //   ];
+    grid: Array<Array<Item | null>>,
+  ) {
+    this.$grid = createStore(grid);
+    this.setGrid = createEvent<Grid>();
+    this.$grid.on(this.setGrid, (_, data) => data);
+  }
 
   sell(item: Item) {
-    const grid = this.grid;
+    const grid = this.$grid.getState();
 
     try {
-      const [i, j] = this.getBy((cell) => cell?.id === item.id);
+      const [i, j] = this.getIdxBy((cell) => cell?.id === item.id);
       grid[i][j] = null;
 
       !this.isVendor && increaseMoney(item.price);
+      this.setGrid([...grid]);
 
       return true;
     } catch (error) {
       return false;
     }
+  }
+
+  swap(from: [number, number], to: [number, number]) {
+    const grid = this.$grid.getState();
+
+    [grid[from[0]][from[1]], grid[to[0]][to[1]]] = [
+      grid[to[0]][to[1]],
+      grid[from[0]][from[1]],
+    ];
+
+    this.setGrid([...grid]);
   }
 
   buy(item: Item) {
@@ -37,8 +59,10 @@ export class Inventory {
     }
 
     try {
-      const [i, j] = this.getBy((item) => !item);
-      this.grid[i][j] = item;
+      const grid = this.$grid.getState();
+      const [i, j] = this.getIdxBy((item) => !item);
+      grid[i][j] = item;
+      this.setGrid([...grid]);
 
       return true;
     } catch (error) {
@@ -46,8 +70,8 @@ export class Inventory {
     }
   }
 
-  private getBy(predicate: (item: Item | null) => boolean) {
-    const grid = this.grid;
+  getIdxBy(predicate: (item: Item | null) => boolean): [number, number] {
+    const grid = this.$grid.getState();
 
     for (let i = 0; i < grid.length; i++) {
       for (let j = 0; j < grid.length; j++) {

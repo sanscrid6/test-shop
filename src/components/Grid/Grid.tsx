@@ -1,8 +1,7 @@
 import styles from "./grid.module.css";
 import { Item } from "../../entities/item";
-import GridItem from "../Item/Item";
-import { useDroppable } from "@dnd-kit/core";
 import { GridType } from "../../types";
+import Cell from "../cell/Cell";
 
 type GridProps = {
   id: GridType;
@@ -11,18 +10,12 @@ type GridProps = {
 };
 
 function Grid({ grid, id, overlayText }: GridProps) {
-  const { setNodeRef } = useDroppable({ id });
-
   return (
     <div className={styles.container}>
       {overlayText && <div className={styles.overlay}>{overlayText}</div>}
-      <div className={styles.gridContainer} ref={setNodeRef}>
+      <div className={styles.gridContainer}>
         {grid.flat().map((cell, index) => {
-          return (
-            <div key={index} className={styles.cell}>
-              {cell && <GridItem {...cell} parentId={id} />}
-            </div>
-          );
+          return <Cell key={index} cell={cell} parentId={id} index={index} />;
         })}
       </div>
     </div>

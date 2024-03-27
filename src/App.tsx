@@ -7,7 +7,7 @@ import {
 import styles from "./app.module.css";
 import Grid from "./components/Grid/Grid";
 import MoneyCounter from "./components/MoneyCounter/MoneyCounter";
-import { useStoreMap, useUnit } from "effector-react";
+import { useUnit } from "effector-react";
 import { $inventory, $vendor } from "./entities/inventory";
 import { GridType } from "./types";
 import { DraggableItemPaylaod } from "./components/Item/Item";
@@ -15,11 +15,11 @@ import { useState } from "react";
 import { Item } from "./entities/item";
 
 function App() {
-  const vendorGrid = useStoreMap($vendor, (state) => state.grid);
-  const inventoryGrid = useStoreMap($inventory, (state) => state.grid);
-
   const vendor = useUnit($vendor);
   const inventory = useUnit($inventory);
+
+  const vendorGrid = useUnit(vendor.$grid);
+  const inventoryGrid = useUnit(inventory.$grid);
 
   const [currentItem, setCurrentItem] = useState<{
     item: Item;
@@ -33,10 +33,11 @@ function App() {
     if (!e.over) return;
 
     const data = e.active.data.current as DraggableItemPaylaod;
+    const [gridType] = (e.over.id as string).split("-");
 
-    if (e.over.id === data.parentId) return;
+    if (gridType === data.parentId) return;
 
-    if (e.over.id === GridType.Inventory) {
+    if (gridType === GridType.Inventory) {
       const item = vendorGrid.flat().find((cell) => cell?.id === e.active.id);
       if (!item) return;
 
@@ -45,7 +46,7 @@ function App() {
       }
     }
 
-    if (e.over.id === GridType.Vendor) {
+    if (gridType === GridType.Vendor) {
       const item = inventoryGrid
         .flat()
         .find((cell) => cell?.id === e.active.id);
@@ -67,7 +68,22 @@ function App() {
 
   function onDragOverHandler(e: DragOverEvent) {
     if (e.over) {
-      setOverlay(e.over.id as GridType);
+      const [gridType, idx] = (e.over.id as string).split("-");
+      setOverlay(gridType as GridType);
+
+      if (
+        gridType === GridType.Inventory &&
+        currentItem?.parentId === GridType.Inventory
+      ) {
+        try {
+          const row = Math.floor(+idx / inventoryGrid.length);
+          const col = +idx % inventoryGrid.length;
+          const from = inventory.getIdxBy(
+            (item) => item?.id === currentItem.item.id,
+          );
+          inventory.swap(from, [row, col]);
+        } catch (error) {}
+      }
     } else {
       setOverlay(null);
     }
