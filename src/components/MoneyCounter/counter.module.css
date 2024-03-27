@@ -9,11 +9,14 @@
     padding: 1rem;
     border: 2px solid green;
     text-align: center;
+    cursor: pointer;
+    user-select: none;
 }
-
 
 .minusButton {
     padding: 1rem;
     border: 2px solid red;
     text-align: center;
+    cursor: pointer;
+    user-select: none;
 }

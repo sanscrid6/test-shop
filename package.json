@@ -10,8 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.1.0",
     "effector": "^23.2.0",
     "effector-react": "^23.2.0",
+    "framer-motion": "^11.0.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

@@ -6,4 +6,4 @@ export const decreaseMoney = createEvent<number>();
 
 $money
   .on(increaseMoney, (state, data) => state + data)
-  .on(decreaseMoney, (state, data) => state + data);
+  .on(decreaseMoney, (state, data) => (state - data < 0 ? 0 : state - data));
