@@ -7,20 +7,24 @@ import { GridType } from "../../types";
 type GridProps = {
   id: GridType;
   grid: Array<Array<Item | null>>;
+  overlayText?: string;
 };
 
-function Grid({ grid, id }: GridProps) {
+function Grid({ grid, id, overlayText }: GridProps) {
   const { setNodeRef } = useDroppable({ id });
 
   return (
-    <div className={styles.container} ref={setNodeRef}>
-      {grid.flat().map((cell, index) => {
-        return (
-          <div key={index} className={styles.cell}>
-            {cell && <GridItem {...cell} parentId={id} />}
-          </div>
-        );
-      })}
+    <div className={styles.container}>
+      {overlayText && <div className={styles.overlay}>{overlayText}</div>}
+      <div className={styles.gridContainer} ref={setNodeRef}>
+        {grid.flat().map((cell, index) => {
+          return (
+            <div key={index} className={styles.cell}>
+              {cell && <GridItem {...cell} parentId={id} />}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

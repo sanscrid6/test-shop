@@ -13,12 +13,14 @@ export type DraggableItemPaylaod = {
 };
 
 function GridItem({ id, image, parentId }: GridItemProps) {
-  const { setNodeRef, attributes, listeners, transform } = useDraggable({
-    id,
-    data: {
-      parentId,
+  const { setNodeRef, attributes, listeners, transform, active } = useDraggable(
+    {
+      id,
+      data: {
+        parentId,
+      },
     },
-  });
+  );
 
   const scale = 1.1;
 
@@ -27,9 +29,10 @@ function GridItem({ id, image, parentId }: GridItemProps) {
     transform.scaleY = scale;
   }
 
-  const style = {
+  const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
-    //transform: `translate3d(${transform?.x}px, ${transform?.y}px, 0) scaleX(3.075) scaleY(3.075)`,
+    position: "absolute",
+    zIndex: active?.id === id ? 100 : 1,
   };
 
   return (
